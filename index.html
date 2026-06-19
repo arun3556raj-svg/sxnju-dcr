@@ -4,645 +4,863 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sxnju DCR — Filmmaker · Hyderabad</title>
-<meta name="description" content="Sxnju DCR — Cinematic filmmaker in Hyderabad. Car deliveries, housewarmings, birthdays, events and reels. Book a shoot today.">
+<meta name="description" content="Sxnju DCR — Cinematic filmmaker in Hyderabad. Car deliveries, housewarmings, weddings, festivals, birthdays, events and reels. Book a shoot today.">
 <link rel="preconnect" href="https://api.fontshare.com">
-<link href="https://api.fontshare.com/v2/css?f[]=boska@700,400&f[]=cabinet-grotesk@800,500,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
 <style>
+/* ============================================================
+   SXNJU DCR — "Marigold at Dusk" cinematic overhaul
+   Display: Cormorant Garamond · UI: Space Grotesk · Mono: JetBrains Mono
+   ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{background:#0b0a08;color:#f4efe4;font-family:'Cabinet Grotesk',system-ui,sans-serif;font-weight:500;overflow-x:hidden;-webkit-font-smoothing:antialiased;--accent:#f0a32f}
-::selection{background:var(--accent);color:#0b0a08}
-a{color:inherit;text-decoration:none}
-.reel-rail::-webkit-scrollbar{display:none}
+html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+body{
+  background:var(--ink);color:var(--cream);
+  font-family:'Space Grotesk',system-ui,sans-serif;font-weight:400;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  cursor:none;
+}
+:root{
+  --ink:#0c0a08;          /* deep charcoal */
+  --ink-2:#14100c;        /* card / band */
+  --ink-3:#1c1611;        /* raised */
+  --cream:#f5efe2;
+  --cream-dim:rgba(245,239,226,.6);
+  --cream-faint:rgba(245,239,226,.14);
+  --marigold:#f0a32f;     /* primary accent — turmeric/marigold */
+  --marigold-2:#ffb347;   /* lighter glow */
+  --sindoor:#9c3b2e;      /* deep maroon secondary */
+  --line:rgba(245,239,226,.12);
+}
+::selection{background:var(--marigold);color:var(--ink)}
+a{color:inherit;text-decoration:none;cursor:none}
+button{cursor:none;font-family:inherit}
+img{display:block;max-width:100%}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ---- film grain (subtle, sit above color not photo res) ---- */
 @keyframes grain{0%,100%{transform:translate(0,0)}12%{transform:translate(-3%,2%)}25%{transform:translate(2%,-3%)}37%{transform:translate(-2%,-2%)}50%{transform:translate(3%,3%)}62%{transform:translate(-3%,1%)}75%{transform:translate(1%,-3%)}87%{transform:translate(-1%,3%)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.nav-links{display:none}
-.sticky-bar{display:flex}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.grain-layer{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:200;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 7s steps(8) infinite}
+
+/* ---- custom cursor ---- */
+.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:300;transform:translate(-50%,-50%);mix-blend-mode:difference}
+.cursor-dot{width:6px;height:6px;background:var(--cream)}
+.cursor-ring{width:38px;height:38px;border:1px solid var(--marigold);transition:width .3s,height .3s,background .3s,opacity .3s;opacity:.7;display:grid;place-items:center}
+.cursor-ring .cur-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;font-weight:700;letter-spacing:.18em;color:var(--ink);opacity:0;transition:opacity .25s}
+
+/* ---- section helpers ---- */
+.sec-pad{padding-left:clamp(1.2rem,4vw,3.4rem);padding-right:clamp(1.2rem,4vw,3.4rem)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.28em;text-transform:uppercase;color:var(--marigold)}
+.divider-mandala{display:flex;align-items:center;justify-content:center;gap:1rem;padding:2.5rem 0;color:var(--marigold);opacity:.6}
+.divider-mandala svg{width:clamp(28px,4vw,40px);height:auto;animation:spin 22s linear infinite}
+
+/* split-text chars */
+.ch{display:inline-block;will-change:transform}
+.word{display:inline-block;white-space:nowrap}
+
+/* reveal helper */
+.reveal{opacity:0;transform:translateY(36px)}
+
+/* buttons */
+.btn{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:.8rem 1.4rem;border:1px solid var(--marigold);color:var(--marigold);position:relative;overflow:hidden;display:inline-block;transition:color .35s}
+.btn::before{content:"";position:absolute;inset:0;background:var(--marigold);transform:scaleY(0);transform-origin:bottom;transition:transform .4s cubic-bezier(.7,0,.2,1);z-index:-1}
+.btn:hover{color:var(--ink)}
+.btn:hover::before{transform:scaleY(1)}
+.btn-solid{background:var(--marigold);color:var(--ink);border:1px solid var(--marigold)}
+.btn-solid::before{background:var(--cream)}
+.btn-solid:hover{color:var(--ink)}
+
+/* ===== LOADER ===== */
+.loader{position:fixed;inset:0;z-index:1000;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem}
+.loader-strip{position:absolute;left:0;right:0;background:#050403}
+.loader-strip.t{top:0;height:14%}
+.loader-strip.b{bottom:0;height:14%}
+.loader-mark{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-style:italic;font-size:clamp(.9rem,2vw,1.1rem);color:var(--marigold);letter-spacing:.02em}
+.loader-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(3rem,13vw,5.5rem);line-height:.86;text-transform:uppercase;text-align:center;letter-spacing:-.01em}
+.loader-title em{font-style:italic;font-weight:500;color:var(--marigold)}
+.loader-bar{width:min(200px,44vw);height:2px;background:rgba(245,239,226,.16);overflow:hidden}
+.loader-bar-fill{height:100%;width:100%;background:var(--marigold);transform:scaleX(0);transform-origin:left}
+.loader-sub{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(245,239,226,.5)}
+.loader-pct{position:absolute;bottom:14%;right:clamp(1.2rem,4vw,3rem);font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cream-dim);letter-spacing:.1em}
+
+/* ===== NAV ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem clamp(1.2rem,4vw,3rem);border-bottom:1px solid transparent;transition:background .4s,border-color .4s}
+.wordmark{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:1.2rem;letter-spacing:.04em;display:flex;align-items:center;gap:.5rem}
+.wordmark .dot{color:var(--marigold)}
+.wordmark .hin{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--marigold);letter-spacing:.2em;border:1px solid var(--marigold);padding:.1rem .35rem;border-radius:2px;vertical-align:middle}
+.nav-links{display:none;gap:2rem;align-items:center}
+.navlink{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,239,226,.62);transition:color .3s;position:relative}
+.navlink::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--marigold);transition:width .3s}
+.navlink:hover{color:var(--cream)}
+.navlink:hover::after{width:100%}
+
+/* ===== HERO ===== */
+header{min-height:100svh;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:0 clamp(1.2rem,4vw,3rem) clamp(2rem,5vh,3.5rem);isolation:isolate;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 28%;will-change:transform;transform:scale(1.02);filter:saturate(.95) contrast(1.06) brightness(.8)}
+/* crisp photo — parallax via transform only, no blur filters */
+.hero-veil{position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--ink) 4%,rgba(12,10,8,.2) 48%,rgba(12,10,8,.55) 100%)}
+.hero-top-fade{position:absolute;top:0;left:0;right:0;height:9%;background:linear-gradient(#050403,transparent);z-index:-1}
+/* light-leak overlay (amber) — sits ABOVE veil, BELOW content; never touches photo res */
+.hero-leak{position:absolute;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(60% 50% at 18% 22%,rgba(240,163,47,.16),transparent 60%),
+  radial-gradient(50% 60% at 85% 80%,rgba(156,59,46,.14),transparent 60%);
+  mix-blend-mode:screen;opacity:.9}
+
+/* aperture shutter overlay — animated SVG mask that opens over the hero */
+.hero-aperture{position:absolute;inset:0;z-index:0;pointer-events:none}
+.hero-aperture svg{width:100%;height:100%}
+
+.hero-meta{display:flex;gap:.85rem;align-items:center;margin-bottom:1.2rem;color:var(--marigold);font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase}
+.rec-dot{width:9px;height:9px;border-radius:50%;background:#e2402c;animation:blink 1.4s infinite;flex:none;box-shadow:0 0 12px rgba(226,64,44,.6)}
+.hero-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-height:.82;font-size:clamp(4.6rem,22vw,16rem);letter-spacing:-.02em;text-transform:uppercase;position:relative;z-index:2}
+.hero-title .row{display:block;overflow:hidden;padding-bottom:.05em;margin-bottom:-.05em}
+.hero-title em{font-style:italic;font-weight:600;color:var(--marigold)}
+.hero-foot{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:1.6rem;margin-top:clamp(1.5rem,4vh,3rem);padding-top:1.4rem;border-top:1px solid var(--cream-faint);flex-wrap:wrap;position:relative;z-index:2}
+.hero-tag{max-width:34ch;font-size:clamp(1rem,1.4vw,1.18rem);line-height:1.55;color:rgba(245,239,226,.72);font-family:'Space Grotesk',sans-serif}
+.hero-tag b{color:var(--cream);font-weight:600}
+.hero-stats{display:flex;gap:clamp(1.6rem,5vw,3.5rem)}
+.stat .num{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:var(--cream);line-height:1}
+.stat .num em{font-style:italic;color:var(--marigold)}
+.stat .lbl{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-dim);margin-top:.3rem}
+.stat .hin{color:var(--marigold);font-family:'JetBrains Mono',monospace;font-size:.7rem;margin-left:.25rem;opacity:.7}
+
+/* scroll cue */
+.scroll-cue{position:absolute;right:clamp(1.2rem,4vw,3rem);bottom:clamp(2rem,5vh,3.5rem);z-index:2;font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-dim);writing-mode:vertical-rl;display:flex;align-items:center;gap:.8rem}
+.scroll-cue .line{width:1px;height:46px;background:linear-gradient(var(--marigold),transparent);animation:blink 2.2s infinite}
+
+/* ===== MARQUEE ===== */
+.marquee{border-top:1px solid var(--cream-faint);border-bottom:1px solid var(--cream-faint);overflow:hidden;padding:1.1rem 0;background:var(--ink-2)}
+.marquee-track{display:flex;gap:3rem;width:max-content;will-change:transform}
+.marquee span{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:1.5rem;letter-spacing:.01em;color:rgba(245,239,226,.7);white-space:nowrap;display:inline-flex;align-items:center;gap:1.4rem}
+.marquee i{color:var(--marigold);font-style:normal;font-size:.8rem}
+.marquee .dev{color:var(--marigold);font-style:normal;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.1em}
+
+/* ===== SECTION HEADS ===== */
+section{position:relative}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:clamp(2rem,5vh,3.5rem);flex-wrap:wrap}
+.sec-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(2.8rem,9vw,5.2rem);line-height:1;text-transform:uppercase;letter-spacing:-.015em}
+.sec-title em{font-style:italic;font-weight:500;color:var(--marigold)}
+.sec-kicker{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--marigold)}
+.sec-kicker .hin{color:var(--cream-dim);margin-left:.4rem}
+
+/* ===== WORK / REELS ===== */
+.reel-rail{display:flex;gap:clamp(.7rem,2vw,1.3rem);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:1.5rem;scroll-padding-left:1.2rem;scrollbar-width:none}
+.reel-rail::-webkit-scrollbar{display:none}
+.reel-progress{margin-top:1rem;height:2px;background:var(--cream-faint);border-radius:2px;overflow:hidden;max-width:300px}
+.reel-progress span{display:block;height:100%;width:0;background:var(--marigold);transition:width .15s}
+.reel-card{flex:none;width:74vw;max-width:290px;aspect-ratio:9/16;position:relative;overflow:hidden;background:var(--ink-2);border:1px solid var(--cream-faint);scroll-snap-align:start;border-radius:4px;will-change:transform}
+.reel-card .reel-frame{position:absolute;inset:0;overflow:hidden;border-radius:inherit}
+.reel-grad{position:absolute;inset:0;background:linear-gradient(160deg,var(--ink-3),#0a0805 70%)}
+.reel-noise{position:absolute;inset:0;opacity:.08;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.reel-meta-top{position:absolute;top:.7rem;left:.8rem;right:.8rem;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.18em;color:var(--cream-dim);z-index:3}
+.reel-meta-top .live{color:var(--marigold)}
+.reel-reticle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;display:grid;place-items:center;z-index:3}
+.reel-reticle .ring{position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%;transition:transform .4s,background .4s}
+.reel-reticle .play{color:var(--marigold);font-size:1.1rem;transform:translateX(1px)}
+.reel-card:hover .reel-reticle .ring{transform:scale(1.15);background:rgba(240,163,47,.12)}
+.reel-foot{position:absolute;left:.9rem;right:.9rem;bottom:.9rem;z-index:3}
+.reel-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.4rem,5vw,1.85rem);font-weight:700;line-height:1;text-transform:uppercase}
+.reel-cta{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--marigold);margin-top:.5rem}
+.reel-badge{position:absolute;left:.7rem;bottom:.7rem;z-index:4;display:flex;align-items:center;gap:.5rem;background:rgba(12,10,8,.74);backdrop-filter:blur(8px);border:1px solid var(--cream-faint);border-radius:99px;padding:.3rem .8rem .3rem .35rem;pointer-events:none}
+.reel-badge img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid var(--marigold)}
+.reel-badge b{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.56rem;letter-spacing:.12em}
+.reel-card.finale{background:var(--marigold);color:var(--ink);display:flex;flex-direction:column;justify-content:space-between;padding:1.1rem}
+.reel-card.finale .f1{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.2em;display:flex;justify-content:space-between}
+.reel-card.finale .f2{font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;font-weight:700;line-height:.95;text-transform:uppercase}
+.reel-card.finale .f3{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase}
+/* mask reveal wrapper */
+.mask-wrap{position:relative;overflow:hidden}
+
+/* ===== SHOOTS / SERVICES ===== */
+.svc{border-top:1px solid var(--cream-faint);position:relative;overflow:hidden}
+.svc-row{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(.9rem,4vw,3rem);align-items:center;padding:clamp(1.4rem,4vh,2.4rem) .3rem;position:relative;z-index:1}
+.svc-no{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--marigold);letter-spacing:.2em}
+.svc-no .hin{display:block;font-size:.6rem;color:var(--cream-dim);margin-top:.2rem}
+.svc-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.6rem,6vw,3.2rem);font-weight:700;text-transform:uppercase;line-height:1;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.svc-name em{font-style:italic;color:var(--marigold);font-weight:600}
+.svc:hover .svc-name{transform:translateX(14px)}
 .svc-desc{display:none}
-.btn:hover{background:var(--accent)!important;color:#0b0a08!important}
-.navlink:hover{color:#f4efe4!important}
-.svc-row:hover .svc-name{transform:translateX(12px)}
-.pkg a:hover{opacity:.85}
+.svc-arrow{font-family:'JetBrains Mono',monospace;color:var(--marigold);transition:transform .4s}
+.svc:hover .svc-arrow{transform:translateX(6px)}
+
+/* ===== PACKAGES ===== */
+.pricing-grid{display:grid;grid-template-columns:1fr;gap:clamp(.9rem,2vw,1.4rem);max-width:1300px;margin:0 auto}
+.pkg{border:1px solid var(--cream-faint);border-radius:6px;padding:clamp(1.6rem,4vw,2.2rem);background:transparent;display:flex;flex-direction:column;gap:1.1rem;position:relative;transition:transform .4s,border-color .4s}
+.pkg:hover{transform:translateY(-6px);border-color:var(--marigold)}
+.pkg.feat{border:1px solid var(--marigold);background:linear-gradient(160deg,var(--ink-3),var(--ink-2))}
+.pkg-head{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.pkg-cat{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--marigold)}
+.pkg-tag{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);background:var(--marigold);padding:.22rem .6rem;border-radius:99px}
+.pkg-tag.hide{visibility:hidden}
+.pkg-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.9rem,4.5vw,2.5rem);font-weight:700;text-transform:uppercase;line-height:1}
+.pkg-name em{font-style:italic;color:var(--marigold);font-weight:600}
+.pkg-blurb{font-size:.92rem;line-height:1.55;color:var(--cream-dim)}
+.pkg-price{font-family:'JetBrains Mono',monospace;font-size:.88rem;letter-spacing:.08em;color:var(--cream);font-weight:700}
+.pkg-list{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-top:.2rem;border-top:1px solid var(--cream-faint);padding-top:1.1rem}
+.pkg-list li{display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(245,239,226,.7)}
+.pkg-list li::before{content:"";width:6px;height:6px;background:var(--marigold);border-radius:50%;flex:none;transform:translateY(2px)}
+.pkg .btn{margin-top:auto;text-align:center;padding:.85rem 1rem;border-radius:3px}
+
+/* ===== TANGLES / CINEMA (pinned) ===== */
+.cine-stage{min-height:100svh;position:relative;overflow:hidden;background:#000;display:grid;place-items:center}
+.bar-top,.bar-bot{position:absolute;left:0;right:0;background:#050403;z-index:6;height:50.5%}
+.bar-top{top:0;transform-origin:top}
+.bar-bot{bottom:0;transform-origin:bottom}
+.cine-grid{display:grid;grid-template-columns:1fr;gap:clamp(2rem,6vw,5rem);align-items:center;justify-items:center;text-align:center;width:min(1300px,92vw);padding:clamp(2.5rem,8vh,5rem) clamp(1.2rem,4vw,2rem)}
+.cine-portrait{position:relative;width:100%;max-width:340px;aspect-ratio:3/4.3;border-radius:999px 999px 6px 6px;overflow:hidden;border:1px solid rgba(240,163,47,.35)}
+.cine-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 14%;transform:scale(1.1);filter:grayscale(1) contrast(1.05)}
+.cine-portrait .glow{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 80px rgba(12,10,8,.55);pointer-events:none}
+.cine-portrait figcaption{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cream);background:rgba(12,10,8,.7);backdrop-filter:blur(6px);border:1px solid var(--cream-faint);border-radius:99px;padding:.4rem 1rem;white-space:nowrap}
+.cine-card .cine-presents{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.32em;text-transform:uppercase;color:var(--cream-dim);display:block}
+.cine-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;text-transform:uppercase;font-size:clamp(3.4rem,13vw,8rem);line-height:.95;letter-spacing:.01em;margin:.7rem 0 .4rem;display:block;color:var(--cream)}
+.cine-title em{font-style:italic;color:var(--marigold)}
+.cine-billing{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--marigold);display:block;margin-bottom:1.8rem}
+.cine-role{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:clamp(1.2rem,4.5vw,1.8rem);line-height:1.4;color:rgba(245,239,226,.75);max-width:34ch;margin:0 auto 2rem}
+.cine-role em{color:var(--marigold);font-style:italic;font-weight:600}
+.cine-tags{margin-top:2rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-dim)}
+.cine-tags i{color:var(--marigold);font-style:normal;padding:0 .6rem}
+
+/* ===== BRANDS ===== */
+.brand-wrap{display:grid;grid-template-columns:1fr;gap:clamp(2.2rem,6vw,5rem);max-width:1300px;margin:0 auto;align-items:start}
+.brand-lead{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.5rem,5vw,2.4rem);line-height:1.3;font-weight:400}
+.brand-lead em{color:var(--marigold);font-style:italic;font-weight:600}
+.brand-list{list-style:none;margin-top:2.2rem}
+.brand-list li{display:flex;gap:1rem;align-items:baseline;padding:1rem 0;border-top:1px solid var(--cream-faint);font-size:1rem;color:rgba(245,239,226,.65);line-height:1.5}
+.brand-list li::before{content:"";width:6px;height:6px;background:var(--marigold);border-radius:50%;flex:none;transform:translateY(2px)}
+.brand-list b{color:var(--cream);font-weight:600}
+.brand-stats{display:grid;gap:.1rem}
+.brand-stat{padding:1.6rem 0;border-top:1px solid var(--cream-faint)}
+.brand-stat .num{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(3rem,9vw,4.6rem);font-weight:700;line-height:1}
+.brand-stat .num em{font-style:italic;color:var(--marigold)}
+.brand-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-dim);margin-top:.5rem}
+
+/* ===== CONTACT ===== */
+#contact{text-align:center;padding:clamp(5rem,14vh,9rem) clamp(1.2rem,4vw,3rem) clamp(5rem,12vh,8rem);isolation:isolate;overflow:hidden}
+.contact-glow{position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 75% 55% at 50% 55%,rgba(240,163,47,.16),transparent 70%)}
+.contact-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--marigold)}
+.contact-title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;text-transform:uppercase;font-size:clamp(3rem,11vw,7.5rem);line-height:1;letter-spacing:-.015em;margin:.5rem 0 1.1rem}
+.contact-title em{color:var(--marigold);font-style:italic}
+.contact-blurb{max-width:46ch;margin:0 auto 2.4rem;color:var(--cream-dim);font-size:1.02rem;line-height:1.65}
+.contact-btns{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+
+/* ===== FOOTER ===== */
+footer{border-top:1px solid var(--cream-faint);padding:1.5rem clamp(1.2rem,4vw,3rem);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);align-items:center}
+footer a{transition:color .3s}
+footer a:hover{color:var(--marigold)}
+.footer-mark{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:1.3rem;font-weight:600;color:var(--marigold);text-transform:none;letter-spacing:0}
+
+/* mobile bottom bar */
+.mob-spacer{height:74px}
+.sticky-bar{position:fixed;bottom:0;left:0;right:0;z-index:120;display:flex;align-items:stretch;gap:.5rem;padding:.6rem .8rem calc(.6rem + env(safe-area-inset-bottom));background:rgba(12,10,8,.92);backdrop-filter:blur(14px);border-top:1px solid var(--cream-faint)}
+.sticky-bar a{flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.64rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.9rem;background:var(--marigold);color:var(--ink);border-radius:3px}
+.sticky-bar a.ghost{flex:none;padding:.9rem 1.2rem;border:1px solid var(--marigold);color:var(--marigold);background:transparent}
+
+/* ===== responsive ===== */
+.nav-links,.sticky-bar{display:none}
 @media(min-width:760px){
-  .nav-links{display:flex !important}
-  .sticky-bar{display:none !important}
-  .mob-spacer{display:none !important}
-  .reel-rail{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(230px,1fr)) !important;overflow:visible !important;padding-left:0 !important;padding-right:0 !important;scroll-padding:0 !important}
-  .reel-card{width:auto !important;scroll-snap-align:unset !important}
-  .svc-desc{display:block !important}
-  .cine-grid{grid-template-columns:minmax(260px,400px) 1fr !important;text-align:left !important;justify-items:start !important}
-  .pricing-grid{grid-template-columns:repeat(3,1fr) !important}
-  .brand-wrap{grid-template-columns:1.05fr .95fr !important}
-  .hero-foot{flex-direction:row !important;align-items:flex-end !important}
-  .sec-pad{padding-left:clamp(1.5rem,4vw,3.4rem) !important;padding-right:clamp(1.5rem,4vw,3.4rem) !important}
+  .nav-links{display:flex}
+  .svc-desc{display:block;max-width:30ch;font-size:.92rem;line-height:1.5;color:var(--cream-dim);text-align:right}
+  .cine-grid{grid-template-columns:minmax(260px,400px) 1fr;text-align:left;justify-items:start}
+  .pricing-grid{grid-template-columns:repeat(3,1fr)}
+  .brand-wrap{grid-template-columns:1.05fr .95fr}
+  .hero-foot{flex-direction:row;align-items:flex-end}
 }
-@media (prefers-reduced-motion: reduce){.film-grain{animation:none !important}.rec-dot{animation:none !important}}
+@media(max-width:759px){.mob-spacer{display:block}.sticky-bar{display:flex}.scroll-cue{display:none}}
+@media(hover:none),(pointer:coarse){body{cursor:auto}a,button{cursor:pointer}.cursor-dot,.cursor-ring{display:none}}
+@media(prefers-reduced-motion:reduce){.grain-layer{animation:none}.rec-dot{animation:none}.divider-mandala svg{animation:none}.reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 
-<div class="film-grain" style="position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:200;opacity:.05;background-image:url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);animation:grain 7s steps(8) infinite"></div>
+<div class="grain-layer"></div>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"><span class="cur-label">VIEW</span></div>
 
-<div class="cursor" style="position:fixed;top:0;left:0;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--accent);z-index:300;pointer-events:none;display:grid;place-items:center;transform:translate(-50%,-50%);opacity:0;transition:width .3s,height .3s,background .3s">
-  <span style="font-family:'Space Mono',monospace;font-size:.5rem;font-weight:700;letter-spacing:.18em;color:#0b0a08;opacity:0;transition:opacity .25s">PLAY</span>
+<!-- ============ LOADER ============ -->
+<div class="loader">
+  <div class="loader-strip t"></div>
+  <div class="loader-strip b"></div>
+  <div class="loader-mark">— Sxnju DCR presents —</div>
+  <div class="loader-title">Now<br><em>Showing</em></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  <div class="loader-sub">Filmmaker · Hyderabad</div>
+  <div class="loader-pct">००%</div>
 </div>
 
-<div class="loader" style="position:fixed;inset:0;z-index:1000;background:#0b0a08;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem">
-  <div style="position:absolute;top:0;left:0;right:0;height:14%;background:#050403"></div>
-  <div style="position:absolute;bottom:0;left:0;right:0;height:14%;background:#050403"></div>
-  <div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--accent)">Now Showing</div>
-  <div style="font-family:'Boska',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,12vw,5rem);line-height:.9;text-transform:uppercase;text-align:center;letter-spacing:.02em">Sxnju<br>DCR</div>
-  <div style="width:min(180px,42vw);height:2px;background:rgba(244,239,228,.16);overflow:hidden">
-    <div class="loader-bar-fill" style="height:100%;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left"></div>
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <a class="wordmark" href="#top">SXNJU<span class="dot">·</span>DCR</a>
+  <div class="nav-links">
+    <a class="navlink" href="#work">Work</a>
+    <a class="navlink" href="#shoots">Shoots</a>
+    <a class="navlink" href="#pricing">Packages</a>
+    <a class="navlink" href="#cinema">Tangles</a>
+    <a class="navlink" href="#brands">Brands</a>
   </div>
-  <div style="font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(244,239,228,.5)">Filmmaker · Hyderabad</div>
-</div>
-
-<nav class="nav sec-pad" style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem clamp(1.1rem,4vw,3rem);border-bottom:1px solid transparent;transition:background .4s,border-color .4s">
-  <a class="wordmark" href="#top" style="font-family:'Space Mono',monospace;font-weight:700;font-size:.82rem;letter-spacing:.3em">SXNJU<em style="color:var(--accent);font-style:normal">·</em>DCR</a>
-  <div class="nav-links" style="gap:2.1rem;align-items:center">
-    <a class="navlink" href="#work" style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,239,228,.62);transition:color .3s">Work</a>
-    <a class="navlink" href="#shoots" style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,239,228,.62);transition:color .3s">Shoots</a>
-    <a class="navlink" href="#pricing" style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,239,228,.62);transition:color .3s">Packages</a>
-    <a class="navlink" href="#cinema" style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,239,228,.62);transition:color .3s">Tangles</a>
-    <a class="navlink" href="#brands" style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,239,228,.62);transition:color .3s">Brands</a>
-  </div>
-  <a class="btn" href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" style="font-family:'Space Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:.7rem 1.3rem;border:1px solid var(--accent);color:var(--accent);position:relative;overflow:hidden;transition:color .35s,background .35s">Book a shoot</a>
+  <a class="btn" href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener">Book a shoot</a>
 </nav>
 
-<header id="top" style="min-height:100svh;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:0 clamp(1.1rem,4vw,3rem) clamp(2rem,5vh,3.5rem);isolation:isolate;overflow:hidden">
-  <div class="hero-bg" style="position:absolute;inset:0;z-index:-2;overflow:hidden">
-    <img src="uploads/hero.webp" alt="Sxnju, filmmaker in Hyderabad" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 28%;filter:saturate(.9) contrast(1.05) brightness(.82)">
+<!-- ============ HERO ============ -->
+<header id="top">
+  <div class="hero-bg">
+    <img class="hero-img" src="uploads/hero.webp" alt="Sxnju, filmmaker in Hyderabad">
   </div>
-  <div style="position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,#0b0a08 5%,rgba(11,10,8,.2) 46%,rgba(11,10,8,.5) 100%)"></div>
-  <div style="position:absolute;top:0;left:0;right:0;height:9%;background:linear-gradient(#050403,transparent);z-index:-1"></div>
+  <div class="hero-top-fade"></div>
+  <div class="hero-veil"></div>
+  <div class="hero-leak"></div>
 
-  <div class="hero-fade" style="display:flex;gap:.85rem;align-items:center;margin-bottom:1.2rem;color:var(--accent);font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase">
-    <span class="rec-dot" style="width:9px;height:9px;border-radius:50%;background:#e2402c;animation:blink 1.4s infinite;flex:none"></span>
+  <!-- aperture shutter overlay (opens on reveal) -->
+  <div class="hero-aperture">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="blade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#050403"/><stop offset="1" stop-color="#14100c"/>
+        </linearGradient>
+      </defs>
+      <polygon class="ap-b1" points="0,0 50,50 0,50" fill="url(#blade)"/>
+      <polygon class="ap-b2" points="0,0 50,50 50,0" fill="url(#blade)"/>
+      <polygon class="ap-b3" points="100,0 50,50 100,50" fill="url(#blade)"/>
+      <polygon class="ap-b4" points="100,0 50,50 50,0" fill="url(#blade)"/>
+      <polygon class="ap-b5" points="0,100 50,50 0,50" fill="url(#blade)"/>
+      <polygon class="ap-b6" points="0,100 50,50 50,100" fill="url(#blade)"/>
+      <polygon class="ap-b7" points="100,100 50,50 100,50" fill="url(#blade)"/>
+      <polygon class="ap-b8" points="100,100 50,50 50,100" fill="url(#blade)"/>
+    </svg>
+  </div>
+
+  <div class="hero-meta hero-fade">
+    <span class="rec-dot"></span>
     <span>Filmmaker · Digital Creator · Hyderabad</span>
   </div>
-  <h1 class="hero-title" style="font-family:'Boska',Georgia,serif;font-weight:700;line-height:.84;font-size:clamp(4.4rem,21vw,15rem);letter-spacing:-.01em;text-transform:uppercase">
-    <span class="row" style="display:block;overflow:hidden;padding-bottom:.05em;margin-bottom:-.05em">SXNJU</span>
-    <span class="row row-stroke" style="display:block;overflow:hidden;padding-bottom:.05em;margin-bottom:-.05em">DCR</span>
+  <h1 class="hero-title">
+    <span class="row"><span data-split>SXNJU</span></span>
+    <span class="row"><span data-split>DCR</span></span>
   </h1>
-  <div class="hero-foot hero-fade" style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:1.6rem;margin-top:clamp(1.5rem,4vh,3rem);padding-top:1.4rem;border-top:1px solid rgba(244,239,228,.14);flex-wrap:wrap">
-    <p style="max-width:34ch;font-size:clamp(1rem,1.4vw,1.2rem);line-height:1.5;color:rgba(244,239,228,.7)"><strong style="color:#f4efe4;font-weight:700">Every frame, cinematic.</strong> Car deliveries, housewarmings, birthdays, events and reels — shot and cut across Hyderabad.</p>
-    <div style="display:flex;gap:clamp(1.6rem,5vw,3.5rem)">
-      <div class="stat"><div class="num" data-count="56.5" data-suffix="K" style="font-family:'Boska',Georgia,serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:#f4efe4">0</div><div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,239,228,.6);margin-top:.3rem">Followers</div></div>
-      <div class="stat"><div class="num" data-count="629" data-suffix="" style="font-family:'Boska',Georgia,serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:#f4efe4">0</div><div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,239,228,.6);margin-top:.3rem">Posts</div></div>
-      <div class="stat"><div class="num" data-count="100" data-suffix="+" style="font-family:'Boska',Georgia,serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:#f4efe4">0</div><div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,239,228,.6);margin-top:.3rem">Shoots Delivered</div></div>
+  <div class="hero-foot hero-fade">
+    <p class="hero-tag"><b>Every frame, cinematic.</b> Car deliveries, housewarmings, weddings, festivals, birthdays &amp; events — shot and cut across <b>Hyderabad</b>.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num" data-count="57" data-suffix="K">0</div><div class="lbl">Followers</div></div>
+      <div class="stat"><div class="num" data-count="634" data-suffix="">0</div><div class="lbl">Posts</div></div>
+      <div class="stat"><div class="num" data-count="120" data-suffix="+">0</div><div class="lbl">Shoots Delivered</div></div>
     </div>
   </div>
+  <div class="scroll-cue">Scroll <span class="line"></span></div>
 </header>
 
-<div class="marquee" style="border-top:1px solid rgba(244,239,228,.14);border-bottom:1px solid rgba(244,239,228,.14);overflow:hidden;padding:1.05rem 0;background:#13110d">
-  <div class="marquee-track" style="display:flex;gap:3rem;width:max-content">
-    <span style="font-family:'Space Mono',monospace;font-size:.76rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(244,239,228,.6);white-space:nowrap">Car Deliveries <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Housewarmings <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Birthdays <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Events <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Solo Shoots <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Reels <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Paid Promotions <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i></span>
-    <span style="font-family:'Space Mono',monospace;font-size:.76rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(244,239,228,.6);white-space:nowrap">Car Deliveries <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Housewarmings <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Birthdays <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Events <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Solo Shoots <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Reels <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i> Paid Promotions <i style="color:var(--accent);font-style:normal;margin:0 1.4rem">✦</i></span>
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Car Deliveries <i>✦</i> Housewarmings <i>✦</i> Weddings <i>✦</i> Festivals <i>✦</i> Birthdays <i>✦</i> Events <i>✦</i> Solo Shoots <i>✦</i> Reels <i>✦</i> Paid Promotions <i>✦</i></span>
+    <span>Car Deliveries <i>✦</i> Housewarmings <i>✦</i> Weddings <i>✦</i> Festivals <i>✦</i> Birthdays <i>✦</i> Events <i>✦</i> Solo Shoots <i>✦</i> Reels <i>✦</i> Paid Promotions <i>✦</i></span>
   </div>
 </div>
 
-<!-- WORK SECTION -->
-<section id="work" class="sec-pad" style="padding:clamp(4rem,10vh,7rem) clamp(1.1rem,4vw,3rem) clamp(3rem,7vh,5rem)">
-  <div class="sec-head" style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:clamp(2rem,5vh,3.5rem);flex-wrap:wrap">
-    <h2 class="wipe" style="position:relative;display:inline-block;font-family:'Boska',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,9vw,5rem);line-height:1.02;text-transform:uppercase;letter-spacing:-.01em"><span class="wipe-text">The Work</span></h2>
-    <span style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)">Selected reels · @sxnju_dcr</span>
+<!-- ============ MANDALA DIVIDER ============ -->
+<div class="divider-mandala" aria-hidden="true">
+  <span style="flex:1;height:1px;background:var(--cream-faint);max-width:120px"></span>
+  <svg viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1"><circle cx="24" cy="24" r="22"/><circle cx="24" cy="24" r="14"/><circle cx="24" cy="24" r="6"/><path d="M24 2v44M2 24h44M7 7l34 34M41 7L7 41"/></g></svg>
+  <span style="flex:1;height:1px;background:var(--cream-faint);max-width:120px"></span>
+</div>
+
+<!-- ============ WORK ============ -->
+<section id="work" class="sec-pad" style="padding-top:clamp(4rem,10vh,7rem);padding-bottom:clamp(3rem,7vh,5rem)">
+  <div class="sec-head">
+    <h2 class="sec-title reveal"><span data-split>The <em>Work</em></span></h2>
+    <span class="sec-kicker">Selected reels · @sxnju_dcr <span class="hin">०६</span></span>
   </div>
-  <div class="reel-rail" style="display:flex;gap:clamp(.7rem,2vw,1.3rem);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:1rem;scroll-padding-left:1.1rem;scrollbar-width:none">
+  <div class="reel-rail" id="reelRail">
 
     <!-- Reel 01 - Live embed -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <iframe src="https://www.instagram.com/reel/DZcqMctpK5U/embed/" loading="lazy" allowfullscreen scrolling="no" style="position:absolute;left:0;top:-54px;width:100%;height:calc(100% + 158px);border:0;display:block;background:#000"></iframe>
-      <div style="position:absolute;left:.7rem;bottom:.7rem;z-index:3;display:flex;align-items:center;gap:.5rem;background:rgba(11,10,8,.74);backdrop-filter:blur(8px);border:1px solid rgba(244,239,228,.14);border-radius:99px;padding:.3rem .8rem .3rem .35rem;pointer-events:none">
-        <img src="uploads/director.webp" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid var(--accent)">
-        <b style="font-family:'Space Mono',monospace;font-weight:400;font-size:.56rem;letter-spacing:.12em">@sxnju_dcr</b>
+    <div class="reel-card">
+      <div class="reel-frame">
+        <iframe src="https://www.instagram.com/reel/DZcqMctpK5U/embed/" loading="lazy" allowfullscreen scrolling="no" style="position:absolute;left:0;top:-54px;width:100%;height:calc(100% + 158px);border:0;display:block;background:#000"></iframe>
       </div>
-      <div style="position:absolute;top:.65rem;left:.7rem;z-index:3;font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--accent);background:rgba(11,10,8,.6);padding:.2rem .5rem;border-radius:2px;pointer-events:none">● LIVE</div>
+      <div class="reel-meta-top"><span>SC ०१</span><span class="live">● LIVE</span></div>
+      <div class="reel-badge"><img src="uploads/director.webp" alt=""><b>@sxnju_dcr</b></div>
     </div>
 
     <!-- Reel 02 - Live embed -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <iframe src="https://www.instagram.com/reel/DZcOOXrpTKH/embed/" loading="lazy" allowfullscreen scrolling="no" style="position:absolute;left:0;top:-54px;width:100%;height:calc(100% + 158px);border:0;display:block;background:#000"></iframe>
-      <div style="position:absolute;left:.7rem;bottom:.7rem;z-index:3;display:flex;align-items:center;gap:.5rem;background:rgba(11,10,8,.74);backdrop-filter:blur(8px);border:1px solid rgba(244,239,228,.14);border-radius:99px;padding:.3rem .8rem .3rem .35rem;pointer-events:none">
-        <img src="uploads/director.webp" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid var(--accent)">
-        <b style="font-family:'Space Mono',monospace;font-weight:400;font-size:.56rem;letter-spacing:.12em">@sxnju_dcr</b>
+    <div class="reel-card">
+      <div class="reel-frame">
+        <iframe src="https://www.instagram.com/reel/DZcOOXrpTKH/embed/" loading="lazy" allowfullscreen scrolling="no" style="position:absolute;left:0;top:-54px;width:100%;height:calc(100% + 158px);border:0;display:block;background:#000"></iframe>
       </div>
-      <div style="position:absolute;top:.65rem;left:.7rem;z-index:3;font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--accent);background:rgba(11,10,8,.6);padding:.2rem .5rem;border-radius:2px;pointer-events:none">● LIVE</div>
+      <div class="reel-meta-top"><span>SC ०२</span><span class="live">● LIVE</span></div>
+      <div class="reel-badge"><img src="uploads/director.webp" alt=""><b>@sxnju_dcr</b></div>
     </div>
 
-    <!-- Reel 03 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DZaGVCKp2yi/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 03</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Car Reveal</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
+    <!-- Reel 03-10 posters with verified IDs -->
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DZaGVCKp2yi/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०३</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Car Reveal</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DZXjRE4J3Z1/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०४</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Housewarming</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DZU8pXVJyEO/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०५</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Birthday Film</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DZSVC23pmgL/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०६</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Event Coverage</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DY7FinRsvsx/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०७</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Night Shoot</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DY1syjVJySf/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०८</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Street Style</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DYyj2-jKSVa/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC ०९</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Solo Portrait</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
+    <a class="reel-card" href="https://www.instagram.com/sxnju_dcr/reel/DYwzOd1pAba/" target="_blank" rel="noopener">
+      <div class="reel-frame"><div class="reel-grad"></div><div class="reel-noise"></div></div>
+      <div class="reel-meta-top"><span>SC १०</span><span>9:16</span></div>
+      <div class="reel-reticle"><span class="ring"></span><span class="play">▶</span></div>
+      <div class="reel-foot"><div class="reel-title">Brand Reel</div><div class="reel-cta">Watch on Instagram →</div></div>
+    </a>
 
-    <!-- Reel 04 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DZXjRE4J3Z1/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 04</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Housewarming</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Reel 05 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DZU8pXVJyEO/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 05</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Birthday Film</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Reel 06 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DZSVC23pmgL/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 06</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Event Coverage</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Reel 07 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DY7FinRsvsx/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 07</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Night Shoot</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Reel 08 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DY1syjVJySf/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 08</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Street Style</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Reel 09 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DYyj2-jKSVa/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 09</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Solo Portrait</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Reel 10 - Poster -->
-    <div class="reel-card reveal" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:#13110d;border:1px solid rgba(244,239,228,.14);scroll-snap-align:start;border-radius:3px">
-      <a href="https://www.instagram.com/sxnju_dcr/reel/DYwzOd1pAba/" target="_blank" rel="noopener" class="poster" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.05rem;text-decoration:none;color:#f4efe4;background:linear-gradient(150deg,#171410,#0d0b09)">
-        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(244,239,228,.55)"><span>SC 10</span><span>9:16</span></div>
-        <div class="reticle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;display:grid;place-items:center">
-          <span style="position:absolute;inset:0;border:1px solid rgba(240,163,47,.5);border-radius:50%"></span>
-          <span style="position:absolute;left:50%;top:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;left:50%;bottom:6px;width:1px;height:8px;background:var(--accent);transform:translateX(-50%)"></span>
-          <span style="position:absolute;top:50%;left:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="position:absolute;top:50%;right:6px;height:1px;width:8px;background:var(--accent);transform:translateY(-50%)"></span>
-          <span style="color:var(--accent);font-size:1.1rem;transform:translateX(1px)">▶</span>
-        </div>
-        <div>
-          <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;line-height:1;text-transform:uppercase">Brand Reel</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-top:.5rem">Watch on Instagram →</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- Final CTA card -->
-    <a class="reel-card reveal" href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener" style="flex:none;width:74vw;max-width:280px;aspect-ratio:9/16;position:relative;overflow:hidden;background:var(--accent);color:#0b0a08;scroll-snap-align:start;border-radius:3px;display:flex;flex-direction:column;justify-content:space-between;padding:1.1rem;text-decoration:none">
-      <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.2em"><span>FIN</span><span>9:16</span></div>
-      <div style="font-family:'Boska',Georgia,serif;font-size:2rem;font-weight:700;line-height:.95;text-transform:uppercase">629 posts<br>on the feed</div>
-      <div style="font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">See all →</div>
+    <!-- Finale -->
+    <a class="reel-card finale" href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener">
+      <div class="f1"><span>FIN</span><span>634</span></div>
+      <div class="f2">View all<br>posts →</div>
+      <div class="f3">@sxnju_dcr · Hyderabad</div>
     </a>
   </div>
-  <p class="reveal" style="margin-top:.4rem;color:rgba(244,239,228,.6);font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.1em">Swipe the strip → · Tap any frame to open the reel on <a href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener" style="color:var(--accent)">Instagram</a>.</p>
+  <div class="reel-progress" aria-hidden="true"><span id="reelProgress"></span></div>
+  <p class="reveal" style="margin-top:1rem;color:var(--cream-dim);font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.1em">Swipe the strip → · Tap any frame to open on <a href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener" style="color:var(--marigold)">Instagram</a>.</p>
 </section>
 
-<!-- SHOOTS SECTION -->
-<section id="shoots" class="sec-pad" style="background:#13110d;border-top:1px solid rgba(244,239,228,.14);border-bottom:1px solid rgba(244,239,228,.14);padding:clamp(4.5rem,11vh,8rem) clamp(1.1rem,4vw,3rem)">
-  <div class="sec-head" style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:clamp(2rem,5vh,3.5rem);flex-wrap:wrap">
-    <h2 class="wipe" style="position:relative;display:inline-block;font-family:'Boska',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,9vw,5rem);line-height:1.02;text-transform:uppercase;letter-spacing:-.01em"><span class="wipe-text">The Shoots</span></h2>
-    <span style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)">Concept to final cut</span>
+<!-- ============ SHOOTS ============ -->
+<section id="shoots" class="sec-pad" style="background:var(--ink-2);border-top:1px solid var(--cream-faint);border-bottom:1px solid var(--cream-faint);padding:clamp(4.5rem,11vh,8rem) clamp(1.2rem,4vw,3rem)">
+  <div class="sec-head">
+    <h2 class="sec-title reveal"><span data-split>The <em>Shoots</em></span></h2>
+    <span class="sec-kicker">Concept to final cut <span class="hin">०१–०६</span></span>
   </div>
   <div>
-    <div class="svc reveal" style="border-top:1px solid rgba(244,239,228,.14);position:relative;overflow:hidden">
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row" style="display:grid;grid-template-columns:auto 1fr auto;gap:clamp(.9rem,4vw,3rem);align-items:center;padding:clamp(1.4rem,4vh,2.4rem) .3rem;position:relative;z-index:1">
-        <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent);letter-spacing:.2em">01</span>
-        <span class="svc-name" style="font-family:'Boska',Georgia,serif;font-size:clamp(1.6rem,6vw,3.2rem);font-weight:700;text-transform:uppercase;line-height:1;transition:transform .45s cubic-bezier(.22,1,.36,1)">Car Deliveries</span>
-        <span class="svc-desc" style="max-width:30ch;font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6);text-align:right">Your new car deserves a launch film. Showroom to street, shot like a commercial.</span>
+    <div class="svc reveal">
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row">
+        <span class="svc-no">०१<span class="hin">Car</span></span>
+        <span class="svc-name">Car <em>Deliveries</em></span>
+        <span class="svc-desc">Your new car deserves a launch film. Showroom to street, shot like a commercial.</span>
+        <span class="svc-arrow">→</span>
       </a>
     </div>
-    <div class="svc reveal" style="border-top:1px solid rgba(244,239,228,.14);position:relative;overflow:hidden">
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row" style="display:grid;grid-template-columns:auto 1fr auto;gap:clamp(.9rem,4vw,3rem);align-items:center;padding:clamp(1.4rem,4vh,2.4rem) .3rem;position:relative;z-index:1">
-        <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent);letter-spacing:.2em">02</span>
-        <span class="svc-name" style="font-family:'Boska',Georgia,serif;font-size:clamp(1.6rem,6vw,3.2rem);font-weight:700;text-transform:uppercase;line-height:1;transition:transform .45s cubic-bezier(.22,1,.36,1)">Housewarmings</span>
-        <span class="svc-desc" style="max-width:30ch;font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6);text-align:right">The first day in your new home, captured warm and cinematic.</span>
+    <div class="svc reveal">
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row">
+        <span class="svc-no">०२<span class="hin">Home</span></span>
+        <span class="svc-name"><em>Housewarmings</em></span>
+        <span class="svc-desc">The first day in your new home, captured warm and cinematic.</span>
+        <span class="svc-arrow">→</span>
       </a>
     </div>
-    <div class="svc reveal" style="border-top:1px solid rgba(244,239,228,.14);position:relative;overflow:hidden">
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row" style="display:grid;grid-template-columns:auto 1fr auto;gap:clamp(.9rem,4vw,3rem);align-items:center;padding:clamp(1.4rem,4vh,2.4rem) .3rem;position:relative;z-index:1">
-        <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent);letter-spacing:.2em">03</span>
-        <span class="svc-name" style="font-family:'Boska',Georgia,serif;font-size:clamp(1.6rem,6vw,3.2rem);font-weight:700;text-transform:uppercase;line-height:1;transition:transform .45s cubic-bezier(.22,1,.36,1)">Birthdays & Events</span>
-        <span class="svc-desc" style="max-width:30ch;font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6);text-align:right">Small parties to big celebrations. Full coverage, highlight reels included.</span>
+    <div class="svc reveal">
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row">
+        <span class="svc-no">०३<span class="hin">Wedding</span></span>
+        <span class="svc-name"><em>Weddings</em></span>
+        <span class="svc-desc">From the haldi to the vidaai — every ritual filmed like a feature.</span>
+        <span class="svc-arrow">→</span>
       </a>
     </div>
-    <div class="svc reveal" style="border-top:1px solid rgba(244,239,228,.14);position:relative;overflow:hidden">
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row" style="display:grid;grid-template-columns:auto 1fr auto;gap:clamp(.9rem,4vw,3rem);align-items:center;padding:clamp(1.4rem,4vh,2.4rem) .3rem;position:relative;z-index:1">
-        <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent);letter-spacing:.2em">04</span>
-        <span class="svc-name" style="font-family:'Boska',Georgia,serif;font-size:clamp(1.6rem,6vw,3.2rem);font-weight:700;text-transform:uppercase;line-height:1;transition:transform .45s cubic-bezier(.22,1,.36,1)">Solo & Reel Shoots</span>
-        <span class="svc-desc" style="max-width:30ch;font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6);text-align:right">Concept, direction, shoot and edit. Reels built to perform on Instagram.</span>
+    <div class="svc reveal">
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row">
+        <span class="svc-no">०४<span class="hin">Festival</span></span>
+        <span class="svc-name">Festivals &amp; <em>Events</em></span>
+        <span class="svc-desc">Diwali, Bonalu, Bathukamma — full coverage with highlight reels included.</span>
+        <span class="svc-arrow">→</span>
       </a>
     </div>
-    <div style="border-top:1px solid rgba(244,239,228,.14)"></div>
+    <div class="svc reveal">
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row">
+        <span class="svc-no">०५<span class="hin">Birthday</span></span>
+        <span class="svc-name"><em>Birthdays</em></span>
+        <span class="svc-desc">Small parties to big celebrations — moments you'll rewatch for years.</span>
+        <span class="svc-arrow">→</span>
+      </a>
+    </div>
+    <div class="svc reveal">
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="svc-row">
+        <span class="svc-no">०६<span class="hin">Reel</span></span>
+        <span class="svc-name">Solo &amp; <em>Reels</em></span>
+        <span class="svc-desc">Concept, direction, shoot and edit. Reels built to perform on Instagram.</span>
+        <span class="svc-arrow">→</span>
+      </a>
+    </div>
+    <div style="border-top:1px solid var(--cream-faint)"></div>
   </div>
 </section>
 
-<!-- PACKAGES SECTION -->
-<section id="pricing" class="sec-pad" style="padding:clamp(4.5rem,11vh,8rem) clamp(1.1rem,4vw,3rem)">
-  <div class="sec-head" style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:clamp(2rem,5vh,3.5rem);flex-wrap:wrap">
-    <h2 class="wipe" style="position:relative;display:inline-block;font-family:'Boska',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,9vw,5rem);line-height:1.02;text-transform:uppercase;letter-spacing:-.01em"><span class="wipe-text">Packages</span></h2>
-    <span style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)">What's included</span>
+<!-- ============ PACKAGES ============ -->
+<section id="pricing" class="sec-pad" style="padding:clamp(4.5rem,11vh,8rem) clamp(1.2rem,4vw,3rem)">
+  <div class="sec-head">
+    <h2 class="sec-title reveal"><span data-split><em>Packages</em></span></h2>
+    <span class="sec-kicker">What's included</span>
   </div>
-  <div class="pricing-grid" style="display:grid;grid-template-columns:1fr;gap:clamp(.9rem,2vw,1.4rem);max-width:1300px;margin:0 auto">
+  <div class="pricing-grid">
 
-    <!-- Solo Reel -->
-    <div class="reveal pkg" style="border:1px solid rgba(244,239,228,.14);border-radius:4px;padding:clamp(1.6rem,4vw,2.2rem);background:transparent;display:flex;flex-direction:column;gap:1.1rem;position:relative">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
-        <span style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)">Reels</span>
-        <span class="pkg-feat" style="font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:#0b0a08;background:var(--accent);padding:.22rem .6rem;border-radius:99px;visibility:hidden">Most booked</span>
-      </div>
-      <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.8rem,4.5vw,2.4rem);font-weight:700;text-transform:uppercase;line-height:1;color:#f4efe4">Solo Reel</div>
-      <p style="font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6)">A single scroll-stopping reel — concept, shoot and edit, made for the feed.</p>
-      <div style="font-family:'Space Mono',monospace;font-size:.88rem;letter-spacing:.08em;color:#f4efe4;font-weight:700">DM for rates</div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-top:.2rem;border-top:1px solid rgba(244,239,228,.12);padding-top:1.1rem">
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Concept + direction</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Up to 2 hrs shoot</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>1 finished reel (9:16)</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Colour grade + music</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>1 revision round</li>
+    <div class="reveal pkg">
+      <div class="pkg-head"><span class="pkg-cat">Reels</span><span class="pkg-tag hide">Most booked</span></div>
+      <div class="pkg-name">Solo <em>Reel</em></div>
+      <p class="pkg-blurb">A single scroll-stopping reel — concept, shoot and edit, made for the feed.</p>
+      <div class="pkg-price">DM for rates</div>
+      <ul class="pkg-list">
+        <li>Concept + direction</li>
+        <li>Up to 2 hrs shoot</li>
+        <li>1 finished reel (9:16)</li>
+        <li>Colour grade + music</li>
+        <li>1 revision round</li>
       </ul>
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" style="margin-top:auto;font-family:'Space Mono',monospace;font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:.85rem 1rem;text-align:center;border-radius:3px;background:transparent;color:var(--accent);border:1px solid var(--accent);transition:opacity .3s">DM to book</a>
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="btn">DM to book</a>
     </div>
 
-    <!-- Event Coverage -->
-    <div class="reveal pkg" style="border:1px solid var(--accent);border-radius:4px;padding:clamp(1.6rem,4vw,2.2rem);background:#171410;display:flex;flex-direction:column;gap:1.1rem;position:relative">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
-        <span style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)">Events</span>
-        <span class="pkg-feat" style="font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:#0b0a08;background:var(--accent);padding:.22rem .6rem;border-radius:99px;visibility:visible">Most booked</span>
-      </div>
-      <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.8rem,4.5vw,2.4rem);font-weight:700;text-transform:uppercase;line-height:1;color:#f4efe4">Event Coverage</div>
-      <p style="font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6)">Full-day coverage of your delivery, housewarming or birthday with a same-week edit.</p>
-      <div style="font-family:'Space Mono',monospace;font-size:.88rem;letter-spacing:.08em;color:#f4efe4;font-weight:700">DM for rates</div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-top:.2rem;border-top:1px solid rgba(244,239,228,.12);padding-top:1.1rem">
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Up to 6 hrs on location</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Highlight reel + teaser</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Edited photo selects</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Same-week delivery</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Story-ready cutdowns</li>
+    <div class="reveal pkg feat">
+      <div class="pkg-head"><span class="pkg-cat">Events</span><span class="pkg-tag">Most booked</span></div>
+      <div class="pkg-name">Event <em>Coverage</em></div>
+      <p class="pkg-blurb">Full-day coverage of your delivery, housewarming, wedding or birthday with a same-week edit.</p>
+      <div class="pkg-price">DM for rates</div>
+      <ul class="pkg-list">
+        <li>Up to 6 hrs on location</li>
+        <li>Highlight reel + teaser</li>
+        <li>Edited photo selects</li>
+        <li>Same-week delivery</li>
+        <li>Story-ready cutdowns</li>
       </ul>
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" style="margin-top:auto;font-family:'Space Mono',monospace;font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:.85rem 1rem;text-align:center;border-radius:3px;background:var(--accent);color:#0b0a08;border:1px solid var(--accent);transition:opacity .3s">Book this</a>
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="btn btn-solid">Book this</a>
     </div>
 
-    <!-- Paid Promotion -->
-    <div class="reveal pkg" style="border:1px solid rgba(244,239,228,.14);border-radius:4px;padding:clamp(1.6rem,4vw,2.2rem);background:transparent;display:flex;flex-direction:column;gap:1.1rem;position:relative">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
-        <span style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)">Brands</span>
-        <span class="pkg-feat" style="font-family:'Space Mono',monospace;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:#0b0a08;background:var(--accent);padding:.22rem .6rem;border-radius:99px;visibility:hidden">Most booked</span>
-      </div>
-      <div style="font-family:'Boska',Georgia,serif;font-size:clamp(1.8rem,4.5vw,2.4rem);font-weight:700;text-transform:uppercase;line-height:1;color:#f4efe4">Paid Promotion</div>
-      <p style="font-size:.92rem;line-height:1.5;color:rgba(244,239,228,.6)">A branded reel posted to his 56.5K Hyderabad audience, with a full story set.</p>
-      <div style="font-family:'Space Mono',monospace;font-size:.88rem;letter-spacing:.08em;color:#f4efe4;font-weight:700">DM for rates</div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-top:.2rem;border-top:1px solid rgba(244,239,228,.12);padding-top:1.1rem">
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Branded reel to 56.5K</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Concept built around the brief</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Story set + mention</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Usage rights on request</li>
-        <li style="display:flex;gap:.7rem;align-items:baseline;font-size:.9rem;line-height:1.4;color:rgba(244,239,228,.7)"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span>Performance recap</li>
+    <div class="reveal pkg">
+      <div class="pkg-head"><span class="pkg-cat">Brands</span><span class="pkg-tag hide">Most booked</span></div>
+      <div class="pkg-name">Paid <em>Promotion</em></div>
+      <p class="pkg-blurb">A branded reel posted to his 57K Hyderabad audience, with a full story set.</p>
+      <div class="pkg-price">DM for rates</div>
+      <ul class="pkg-list">
+        <li>Branded reel to 57K</li>
+        <li>Concept built around the brief</li>
+        <li>Story set + mention</li>
+        <li>Usage rights on request</li>
+        <li>Performance recap</li>
       </ul>
-      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" style="margin-top:auto;font-family:'Space Mono',monospace;font-size:.64rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:.85rem 1rem;text-align:center;border-radius:3px;background:transparent;color:var(--accent);border:1px solid var(--accent);transition:opacity .3s">DM to book</a>
+      <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" class="btn">DM to book</a>
     </div>
 
   </div>
 </section>
 
-<!-- TANGLES / CINEMA SECTION -->
+<!-- ============ TANGLES (pinned) ============ -->
 <section id="cinema" style="padding:0;position:relative">
-  <div class="cine-stage" style="min-height:100svh;position:relative;overflow:hidden;background:#000;display:grid;place-items:center">
-    <div class="bar-top" style="position:absolute;left:0;right:0;top:0;background:#050403;z-index:6;height:50.5%;transform-origin:top"></div>
-    <div class="bar-bot" style="position:absolute;left:0;right:0;bottom:0;background:#050403;z-index:6;height:50.5%;transform-origin:bottom"></div>
-    <div class="cine-grid sec-pad" style="display:grid;grid-template-columns:1fr;gap:clamp(2rem,6vw,5rem);align-items:center;justify-items:center;text-align:center;width:min(1300px,92vw);padding:clamp(2.5rem,8vh,5rem) clamp(1.1rem,4vw,2rem)">
-      <figure class="cine-portrait" style="position:relative;width:100%;max-width:340px;aspect-ratio:3/4.3;border-radius:999px 999px 6px 6px;overflow:hidden;border:1px solid rgba(240,163,47,.35)">
-        <img class="cine-img" src="uploads/director.webp" alt="Sxnju, mirror portrait in red shirt" style="width:100%;height:100%;object-fit:cover;object-position:50% 14%;transform:scale(1.1);filter:grayscale(1) contrast(1.05)">
-        <div style="position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 80px rgba(11,10,8,.55);pointer-events:none"></div>
-        <figcaption style="position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:#f4efe4;background:rgba(11,10,8,.7);backdrop-filter:blur(6px);border:1px solid rgba(244,239,228,.14);border-radius:99px;padding:.4rem 1rem;white-space:nowrap">Sxnju · Director</figcaption>
+  <div class="cine-stage">
+    <div class="bar-top"></div>
+    <div class="bar-bot"></div>
+    <div class="cine-grid sec-pad">
+      <figure class="cine-portrait">
+        <img class="cine-img" src="uploads/director.webp" alt="Sxnju, mirror portrait in red shirt">
+        <div class="glow"></div>
+        <figcaption>Sxnju · Director</figcaption>
       </figure>
       <div class="cine-card">
-        <span style="font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(244,239,228,.6);display:block">Sxnju DCR presents</span>
-        <span class="cine-title" style="font-family:'Boska',Georgia,serif;font-weight:700;text-transform:uppercase;font-size:clamp(3.2rem,13vw,8rem);line-height:.95;letter-spacing:.04em;margin:.7rem 0 .4rem;display:block;color:#f4efe4">Tangles</span>
-        <span class="cine-billing" style="font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:1.8rem">A film written &amp; directed by Sxnju · 2025</span>
-        <p class="cine-role" style="font-family:'Boska',Georgia,serif;font-weight:400;font-size:clamp(1.2rem,4.5vw,1.8rem);line-height:1.35;color:rgba(244,239,228,.7);max-width:34ch;margin:0 auto 2rem">Client shoots pay for the camera. <em style="color:var(--accent);font-style:normal;font-weight:700">Cinema is why he picks it up.</em> He writes, directs and cuts his own films — and that eye shows up in every frame he delivers.</p>
-        <a class="btn cine-btn" href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener" style="display:inline-block;font-family:'Space Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:.85rem 1.6rem;border:1px solid var(--accent);color:var(--accent);transition:background .35s,color .35s">Watch on Instagram</a>
-        <p class="cine-tags" style="margin-top:2rem;font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,239,228,.6)">Cinema <i style="color:var(--accent);font-style:normal;padding:0 .6rem">●</i> Direction <i style="color:var(--accent);font-style:normal;padding:0 .6rem">●</i> Storytelling</p>
+        <span class="cine-presents">Sxnju DCR presents</span>
+        <span class="cine-title"><span data-split>Tangles</span></span>
+        <span class="cine-billing">A film written &amp; directed by Sxnju · २०२५</span>
+        <p class="cine-role">Client shoots pay for the camera. <em>Cinema is why he picks it up.</em> He writes, directs and cuts his own films — and that eye shows up in every frame he delivers.</p>
+        <a class="btn cine-btn" href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener">Watch on Instagram</a>
+        <p class="cine-tags">Cinema <i>●</i> Direction <i>●</i> Storytelling</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- BRANDS SECTION -->
-<section id="brands" class="sec-pad" style="background:#13110d;border-top:1px solid rgba(244,239,228,.14);border-bottom:1px solid rgba(244,239,228,.14);padding:clamp(4.5rem,11vh,8rem) clamp(1.1rem,4vw,3rem)">
-  <div class="sec-head" style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:clamp(2rem,5vh,3.5rem);flex-wrap:wrap">
-    <h2 class="wipe" style="position:relative;display:inline-block;font-family:'Boska',Georgia,serif;font-weight:700;font-size:clamp(2.6rem,9vw,5rem);line-height:1.02;text-transform:uppercase;letter-spacing:-.01em"><span class="wipe-text">For Brands</span></h2>
-    <span style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)">Paid promotion · collabs</span>
+<!-- ============ BRANDS ============ -->
+<section id="brands" class="sec-pad" style="background:var(--ink-2);border-top:1px solid var(--cream-faint);border-bottom:1px solid var(--cream-faint);padding:clamp(4.5rem,11vh,8rem) clamp(1.2rem,4vw,3rem)">
+  <div class="sec-head">
+    <h2 class="sec-title reveal"><span data-split>For <em>Brands</em></span></h2>
+    <span class="sec-kicker">Paid promotion · collabs</span>
   </div>
-  <div class="brand-wrap" style="display:grid;grid-template-columns:1fr;gap:clamp(2.2rem,6vw,5rem);max-width:1300px;margin:0 auto;align-items:start">
+  <div class="brand-wrap">
     <div class="reveal">
-      <p style="font-family:'Boska',Georgia,serif;font-size:clamp(1.5rem,5vw,2.4rem);line-height:1.25;font-weight:400">A Hyderabad audience that actually watches. <em style="color:var(--accent);font-style:normal;font-weight:700">One creator</em> who shoots, edits and delivers the whole campaign himself.</p>
-      <ul style="list-style:none;margin-top:2.2rem">
-        <li style="display:flex;gap:1rem;align-items:baseline;padding:1rem 0;border-top:1px solid rgba(244,239,228,.14);font-size:1rem;color:rgba(244,239,228,.65);line-height:1.5"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span><span><strong style="color:#f4efe4;font-weight:700">Instagram reels</strong> shot, edited and posted to 56.5K followers</span></li>
-        <li style="display:flex;gap:1rem;align-items:baseline;padding:1rem 0;border-top:1px solid rgba(244,239,228,.14);font-size:1rem;color:rgba(244,239,228,.65);line-height:1.5"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span><span><strong style="color:#f4efe4;font-weight:700">Product &amp; venue shoots</strong> with usage rights on request</span></li>
-        <li style="display:flex;gap:1rem;align-items:baseline;padding:1rem 0;border-top:1px solid rgba(244,239,228,.14);font-size:1rem;color:rgba(244,239,228,.65);line-height:1.5"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span><span><strong style="color:#f4efe4;font-weight:700">Event coverage</strong> with same-week highlight delivery</span></li>
-        <li style="display:flex;gap:1rem;align-items:baseline;padding:1rem 0;border-top:1px solid rgba(244,239,228,.14);font-size:1rem;color:rgba(244,239,228,.65);line-height:1.5"><span style="color:var(--accent);font-size:.5rem;transform:translateY(-2px)">●</span><span><strong style="color:#f4efe4;font-weight:700">One point of contact</strong> from brief to final cut</span></li>
+      <p class="brand-lead">A Hyderabad audience that actually watches. <em>One creator</em> who shoots, edits and delivers the whole campaign himself.</p>
+      <ul class="brand-list">
+        <li><span><b>Instagram reels</b> shot, edited and posted to 57K followers</span></li>
+        <li><span><b>Product &amp; venue shoots</b> with usage rights on request</span></li>
+        <li><span><b>Wedding &amp; event coverage</b> with same-week highlight delivery</span></li>
+        <li><span><b>Festival &amp; cultural films</b> — Diwali, Bonalu, Bathukamma</span></li>
+        <li><span><b>One point of contact</b> from brief to final cut</span></li>
       </ul>
     </div>
-    <div class="reveal" style="display:grid;gap:.1rem">
-      <div style="padding:1.6rem 0;border-top:1px solid rgba(244,239,228,.14)"><div class="num" data-count="56.5" data-suffix="K" style="font-family:'Boska',Georgia,serif;font-size:clamp(3rem,9vw,4.6rem);font-weight:700;line-height:1">0</div><div style="font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,239,228,.6);margin-top:.5rem">Engaged Followers</div></div>
-      <div style="padding:1.6rem 0;border-top:1px solid rgba(244,239,228,.14)"><div class="num" data-count="629" data-suffix="" style="font-family:'Boska',Georgia,serif;font-size:clamp(3rem,9vw,4.6rem);font-weight:700;line-height:1">0</div><div style="font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,239,228,.6);margin-top:.5rem">Posts Published</div></div>
-      <div style="padding:1.6rem 0;border-top:1px solid rgba(244,239,228,.14)"><div style="font-family:'Boska',Georgia,serif;font-size:clamp(3rem,9vw,4.6rem);font-weight:700;line-height:1;color:var(--accent)">Minutes</div><div style="font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(244,239,228,.6);margin-top:.5rem">DM Reply Time</div></div>
+    <div class="reveal brand-stats">
+      <div class="brand-stat"><div class="num" data-count="57" data-suffix="K">0</div><div class="lbl">Engaged Followers</div></div>
+      <div class="brand-stat"><div class="num" data-count="634" data-suffix="">0</div><div class="lbl">Posts Published</div></div>
+      <div class="brand-stat"><div class="num" data-count="742" data-suffix="">0</div><div class="lbl">Following · Network</div></div>
     </div>
   </div>
 </section>
 
-<!-- CONTACT SECTION -->
-<section id="contact" class="sec-pad" style="position:relative;text-align:center;padding:clamp(5rem,14vh,9rem) clamp(1.1rem,4vw,3rem);isolation:isolate;overflow:hidden">
-  <div style="position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 75% 55% at 50% 55%,rgba(240,163,47,.14),transparent 70%)"></div>
-  <span class="reveal" style="font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)">Bookings open · Hyderabad &amp; beyond</span>
-  <h2 class="reveal" style="font-family:'Boska',Georgia,serif;font-weight:700;text-transform:uppercase;font-size:clamp(2.8rem,11vw,7rem);line-height:1.02;letter-spacing:-.01em;margin:.5rem 0 1.1rem">Let's make it <em style="color:var(--accent);font-style:normal">cinematic</em></h2>
-  <p class="reveal" style="max-width:46ch;margin:0 auto 2.4rem;color:rgba(244,239,228,.65);font-size:1.02rem;line-height:1.6">For paid promotions, shoot bookings and collabs, the fastest way to reach Sxnju is a DM on Instagram. Share the date, the occasion and the location — you'll hear back within minutes.</p>
-  <div class="reveal" style="display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
-    <span class="magnet" style="display:inline-block"><a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" style="display:inline-block;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:.95rem 1.7rem;background:var(--accent);color:#0b0a08;border:1px solid var(--accent);transition:opacity .3s">DM for paid promotion</a></span>
-    <span class="magnet" style="display:inline-block"><a href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener" style="display:inline-block;font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:.95rem 1.7rem;border:1px solid var(--accent);color:var(--accent);transition:background .3s,color .3s">@sxnju_dcr</a></span>
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <span class="contact-eyebrow reveal">Bookings open · Hyderabad &amp; beyond</span>
+  <h2 class="contact-title reveal"><span data-split>Let's make it <em>cinematic</em></span></h2>
+  <p class="contact-blurb reveal">For paid promotions, shoot bookings and collabs, the fastest way to reach Sxnju is a DM on Instagram. Share the date, the occasion and the location — you'll hear back within minutes.</p>
+  <div class="contact-btns reveal">
+    <a class="btn btn-solid" href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener">DM for paid promotion</a>
+    <a class="btn" href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener">@sxnju_dcr</a>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="sec-pad" style="border-top:1px solid rgba(244,239,228,.14);padding:1.3rem clamp(1.1rem,4vw,3rem);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,239,228,.6)">
-  <span>© 2026 Sxnju DCR · Hyderabad</span>
-  <span><a href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener" style="transition:color .3s">Instagram</a> · <a href="https://www.threads.net/@sxnju_dcr" target="_blank" rel="noopener" style="transition:color .3s">Threads</a></span>
+<!-- ============ FOOTER ============ -->
+<footer>
+  <span>© २०२६ <span class="footer-mark">Sxnju DCR</span> · Hyderabad</span>
+  <span><a href="https://www.instagram.com/sxnju_dcr" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.threads.net/@sxnju_dcr" target="_blank" rel="noopener">Threads</a></span>
 </footer>
 
-<div class="mob-spacer" style="height:74px"></div>
-
-<div class="sticky-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:120;align-items:stretch;gap:.5rem;padding:.6rem .8rem calc(.6rem + env(safe-area-inset-bottom));background:rgba(11,10,8,.92);backdrop-filter:blur(14px);border-top:1px solid rgba(244,239,228,.14)">
-  <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;font-family:'Space Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.95rem;background:var(--accent);color:#0b0a08;border-radius:3px">DM to book</a>
-  <a href="#work" style="flex:none;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.95rem 1.2rem;border:1px solid var(--accent);color:var(--accent);border-radius:3px">Reels</a>
+<div class="mob-spacer"></div>
+<div class="sticky-bar">
+  <a href="https://ig.me/m/sxnju_dcr" target="_blank" rel="noopener">DM to book</a>
+  <a class="ghost" href="#work">Reels</a>
 </div>
 
 <script>
 (function(){
   const ready = () => (window.gsap && window.ScrollTrigger);
   let tries = 0;
-  const boot = () => {
-    if (ready()) return init();
-    if (tries++ < 120) return setTimeout(boot, 40);
-  };
+  const boot = () => { if (ready()) return init(); if (tries++ < 120) return setTimeout(boot, 40); };
   boot();
 
-  function init() {
+  function init(){
     const gsap = window.gsap;
     gsap.registerPlugin(window.ScrollTrigger);
     const ST = window.ScrollTrigger;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const $ = (s) => document.querySelector(s);
-    const $$ = (s) => Array.from(document.querySelectorAll(s));
+    const $ = (s)=>document.querySelector(s);
+    const $$ = (s)=>Array.from(document.querySelectorAll(s));
 
-    const split = (el) => {
-      if (!el || el.dataset.split) return el ? el.querySelectorAll(".ch") : [];
-      el.dataset.split = "1";
-      el.innerHTML = el.textContent.trim().split("").map(c =>
-        c === " " ? " " : `<span class="ch" style="display:inline-block;will-change:transform">${c}</span>`).join("");
-      return el.querySelectorAll(".ch");
-    };
-
-    const counters = () => {
-      $$("[data-count]").forEach(el => {
-        const target = parseFloat(el.dataset.count), dec = el.dataset.count.includes(".");
-        const suffix = el.dataset.suffix || "";
-        if (reduced) { el.innerHTML = (dec ? target.toFixed(1) : target) + (suffix ? `<em style="color:var(--accent);font-style:normal">${suffix}</em>` : ""); return; }
-        const obj = { v: 0 };
-        gsap.to(obj, {
-          v: target, duration: 1.4, ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 90%" },
-          onUpdate: () => { el.textContent = (dec ? obj.v.toFixed(1) : Math.round(obj.v)) + suffix; },
-          onComplete: () => { el.innerHTML = (dec ? target.toFixed(1) : target) + (suffix ? `<em style="color:var(--accent);font-style:normal">${suffix}</em>` : ""); },
+    // ---- Lenis smooth scroll, synced to ScrollTrigger ----
+    let lenis = null;
+    if (window.Lenis && !reduced){
+      lenis = new window.Lenis({ duration:1.1, easing:(t)=>Math.min(1,1.001-Math.pow(2,-10*t)), smoothWheel:true });
+      lenis.on("scroll", ST.update);
+      gsap.ticker.add((t)=>lenis.raf(t*1000));
+      gsap.ticker.lagSmoothing(0);
+      // anchor links use lenis
+      $$('a[href^="#"]').forEach(a=>{
+        a.addEventListener("click",(e)=>{
+          const id=a.getAttribute("href");
+          if(id.length>1){ const el=document.querySelector(id); if(el){ e.preventDefault(); lenis.scrollTo(el,{offset:0}); } }
         });
       });
+    }
+
+    // ---- split text: wraps chars + words for headings ----
+    const split = (el)=>{
+      if(!el) return [];
+      if(el.dataset.split){ return el.querySelectorAll(".ch"); }
+      el.dataset.split = "1";
+      const txt = el.textContent;
+      el.textContent = "";
+      const frag = document.createDocumentFragment();
+      txt.split(/(\s+)/).forEach(part=>{
+        if(part.trim()===""){ if(part.length) frag.appendChild(document.createTextNode(part)); return; }
+        const w = document.createElement("span"); w.className="word";
+        part.split("").forEach(c=>{ const s=document.createElement("span"); s.className="ch"; s.textContent=c; w.appendChild(s); });
+        frag.appendChild(w);
+      });
+      el.appendChild(frag);
+      return el.querySelectorAll(".ch");
+    };
+    $$("[data-split]").forEach(split);
+
+    // ---- counters ----
+    const counters = ()=>{
+      $$("[data-count]").forEach(el=>{
+        const target=parseFloat(el.dataset.count), dec=el.dataset.count.includes(".");
+        const suffix=el.dataset.suffix||"";
+        if(reduced){ el.innerHTML=(dec?target.toFixed(1):target)+(suffix?`<em>${suffix}</em>`:""); return; }
+        const obj={v:0};
+        gsap.to(obj,{ v:target, duration:1.6, ease:"power3.out",
+          scrollTrigger:{trigger:el, start:"top 90%"},
+          onUpdate:()=>{ el.innerHTML=(dec?obj.v.toFixed(1):Math.round(obj.v))+(suffix?`<em>${suffix}</em>`:""); },
+          onComplete:()=>{ el.innerHTML=(dec?target.toFixed(1):target)+(suffix?`<em>${suffix}</em>`:""); } });
+      });
     };
 
-    const heroIn = () => {
-      if (reduced) { counters(); return; }
-      $$(".hero-title .row").forEach((row, r) => {
-        const chars = split(row);
-        gsap.from(chars, { yPercent: 120, rotateZ: 4, duration: 1.05, ease: "power4.out", stagger: 0.04, delay: 0.05 + r * 0.1 });
-      });
-      gsap.from(".hero-fade", { opacity: 0, y: 24, duration: 0.9, ease: "power3.out", delay: 0.55, stagger: 0.14 });
-      gsap.from(".hero-bg img", { scale: 1.12, duration: 2, ease: "power2.out" });
+    // ---- hero entrance ----
+    const heroIn = ()=>{
+      // aperture shutter open
+      if(!reduced){
+        gsap.to(".hero-aperture svg", {opacity:0, duration:1.1, ease:"power2.inOut", delay:0.2});
+        gsap.to(".ap-b1,.ap-b2",{xPercent:-120,duration:1,ease:"power3.inOut",stagger:0.04,delay:0.2});
+        gsap.to(".ap-b3,.ap-b4",{xPercent:120,duration:1,ease:"power3.inOut",stagger:0.04,delay:0.2});
+        gsap.to(".ap-b5,.ap-b6",{xPercent:-120,duration:1,ease:"power3.inOut",stagger:0.04,delay:0.2});
+        gsap.to(".ap-b7,.ap-b8",{xPercent:120,duration:1,ease:"power3.inOut",stagger:0.04,delay:0.2});
+      } else { gsap.set(".hero-aperture",{opacity:0}); }
+      // title char reveal
+      const chars = $$(".hero-title [data-split] .ch");
+      if(!reduced){
+        gsap.from(chars,{ yPercent:120, rotateZ:4, duration:1.1, ease:"power4.out", stagger:0.03, delay:0.35 });
+        gsap.from(".hero-fade",{ opacity:0, y:24, duration:0.9, ease:"power3.out", delay:0.7, stagger:0.14 });
+        gsap.from(".hero-img",{ scale:1.12, duration:2, ease:"power2.out" });
+      }
       counters();
     };
 
     // ---- intro loader ----
-    const loader = $(".loader");
-    const skip = reduced || sessionStorage.getItem("sxnju_seen");
-    if (loader && !skip) {
-      sessionStorage.setItem("sxnju_seen", "1");
-      document.body.style.overflow = "hidden";
-      const tl = gsap.timeline({ onComplete: () => { document.body.style.overflow = ""; heroIn(); } });
-      tl.to(".loader-bar-fill", { scaleX: 1, duration: 0.85, ease: "power2.inOut" })
-        .to(loader, { yPercent: -100, duration: 0.7, ease: "power4.inOut" }, "+=0.05")
-        .set(loader, { display: "none" });
+    const loader=$(".loader");
+    const skip=reduced||sessionStorage.getItem("sxnju_seen");
+    const fireHero=()=>{ heroIn(); };
+    if(loader&&!skip){
+      sessionStorage.setItem("sxnju_seen","1");
+      document.body.style.overflow="hidden";
+      const pct=$(".loader-pct");
+      const tl=gsap.timeline({ onComplete:()=>{ document.body.style.overflow=""; if(lenis) lenis.start(); fireHero(); } });
+      tl.to(".loader-bar-fill",{ scaleX:1, duration:1.1, ease:"power2.inOut",
+          onUpdate:function(){ if(pct) pct.textContent = String(Math.round(this.progress()*100)).padStart(2,"0")+"%"; } })
+        .to(loader,{ yPercent:-100, duration:0.7, ease:"power4.inOut" }, "+=0.15")
+        .set(loader,{ display:"none" });
+      if(lenis) lenis.stop();
     } else {
-      if (loader) loader.style.display = "none";
-      heroIn();
+      if(loader) loader.style.display="none";
+      fireHero();
     }
 
     // ---- nav scrolled state ----
-    const nav = $(".nav");
-    addEventListener("scroll", () => {
-      if (!nav) return;
-      const on = scrollY > 40;
-      nav.style.background = on ? "rgba(11,10,8,.86)" : "transparent";
-      nav.style.backdropFilter = on ? "blur(14px)" : "none";
-      nav.style.borderBottomColor = on ? "rgba(244,239,228,.14)" : "transparent";
-    }, { passive: true });
+    const nav=$(".nav");
+    addEventListener("scroll",()=>{
+      if(!nav) return;
+      const on=scrollY>40;
+      nav.style.background=on?"rgba(12,10,8,.86)":"transparent";
+      nav.style.backdropFilter=on?"blur(14px)":"none";
+      nav.style.borderBottomColor=on?"var(--cream-faint)":"transparent";
+    },{passive:true});
 
-    if (reduced) { gsap.set(".reveal", { opacity: 1, y: 0 }); $$(".wipe-text").forEach(t => t.style.opacity = 1); return; }
+    if(reduced){ gsap.set(".reveal",{opacity:1,y:0}); return; }
 
-    // ---- heading curtain wipes ----
-    $$(".wipe").forEach(w => {
-      const text = w.querySelector(".wipe-text");
-      if (text) text.style.opacity = "0";
-      const block = document.createElement("span");
-      Object.assign(block.style, { position: "absolute", inset: "-4% -3%", background: "var(--accent)", transform: "scaleX(0)", transformOrigin: "left", zIndex: "1" });
-      w.appendChild(block);
-      gsap.timeline({ scrollTrigger: { trigger: w, start: "top 85%" } })
-        .to(block, { scaleX: 1, duration: 0.45, ease: "power3.inOut" })
-        .set(text, { opacity: 1 })
-        .set(block, { transformOrigin: "right" })
-        .to(block, { scaleX: 0, duration: 0.45, ease: "power3.inOut" });
+    // ---- heading char reveals on scroll ----
+    $$(".sec-title [data-split] .ch, .contact-title [data-split] .ch, .cine-title [data-split] .ch").forEach(el=>{
+      gsap.set(el,{yPercent:120});
+    });
+    $$("[data-split]").forEach(head=>{
+      const chars=head.querySelectorAll(".ch");
+      if(!chars.length) return;
+      gsap.to(chars,{ yPercent:0, duration:0.9, ease:"power3.out", stagger:0.02,
+        scrollTrigger:{ trigger:head, start:"top 85%" } });
     });
 
     // ---- generic reveals ----
-    gsap.set(".reveal", { opacity: 0, y: 36 });
-    ST.batch(".reveal", {
-      start: "top 90%",
-      onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: 0.85, ease: "power3.out", stagger: 0.08, overwrite: true }),
+    gsap.set(".reveal",{opacity:0,y:36});
+    ST.batch(".reveal",{ start:"top 90%",
+      onEnter:b=>gsap.to(b,{opacity:1,y:0,duration:0.85,ease:"power3.out",stagger:0.08,overwrite:true}) });
+
+    // ---- reel aperture mask reveal on enter ----
+    $$(".reel-card").forEach((card,i)=>{
+      gsap.from(card,{ opacity:0, y:50, scale:.94, duration:0.8, ease:"power3.out", delay:i*0.05,
+        scrollTrigger:{ trigger:".reel-rail", start:"top 80%" } });
     });
 
-    // ---- hero parallax (gentle) ----
-    gsap.to(".hero-bg img", { yPercent: 12, ease: "none", scrollTrigger: { trigger: "header", start: "top top", end: "bottom top", scrub: true } });
-    gsap.to(".hero-title", { yPercent: -14, opacity: 0.3, ease: "none", scrollTrigger: { trigger: "header", start: "55% 55%", end: "bottom top", scrub: true } });
+    // ---- hero parallax (transform only — photo stays crisp) ----
+    gsap.to(".hero-img",{ yPercent:12, ease:"none", scrollTrigger:{ trigger:"header", start:"top top", end:"bottom top", scrub:true } });
+    gsap.to(".hero-title",{ yPercent:-14, opacity:0.3, ease:"none", scrollTrigger:{ trigger:"header", start:"55% 55%", end:"bottom top", scrub:true } });
+    gsap.to(".hero-leak",{ yPercent:6, ease:"none", scrollTrigger:{ trigger:"header", start:"top top", end:"bottom top", scrub:true } });
 
     // ---- marquee velocity ----
-    const track = $(".marquee-track");
-    if (track) {
-      const loop = gsap.to(track, { xPercent: -50, duration: 24, ease: "none", repeat: -1 });
-      let speed = 1;
-      ST.create({ onUpdate: self => { speed = gsap.utils.clamp(1, 5, 1 + Math.abs(self.getVelocity()) / 380); } });
-      gsap.ticker.add(() => { loop.timeScale(gsap.utils.interpolate(loop.timeScale(), speed, 0.06)); speed = gsap.utils.interpolate(speed, 1, 0.04); });
+    const track=$(".marquee-track");
+    if(track){
+      const loop=gsap.to(track,{ xPercent:-50, duration:24, ease:"none", repeat:-1 });
+      let speed=1;
+      ST.create({ onUpdate:self=>{ speed=gsap.utils.clamp(1,5,1+Math.abs(self.getVelocity())/380); } });
+      gsap.ticker.add(()=>{ loop.timeScale(gsap.utils.interpolate(loop.timeScale(),speed,0.06)); speed=gsap.utils.interpolate(speed,1,0.04); });
     }
 
-    // ---- Tangles director scene ----
-    const cineTitle = split($(".cine-title"));
-    gsap.matchMedia().add("(min-width: 760px)", () => {
-      const tl = gsap.timeline({ scrollTrigger: { trigger: ".cine-stage", start: "top top", end: "+=130%", pin: true, scrub: 0.8, anticipatePin: 1 } });
-      tl.to(".bar-top", { height: "7%", ease: "power2.inOut", duration: 1 }, 0)
-        .to(".bar-bot", { height: "7%", ease: "power2.inOut", duration: 1 }, 0)
-        .from(".cine-portrait", { xPercent: -14, opacity: 0, ease: "power2.out", duration: 0.7 }, 0.15)
-        .to(".cine-img", { filter: "grayscale(0) contrast(1.05)", scale: 1.03, ease: "none", duration: 0.7 }, 0.5)
-        .from(cineTitle, { yPercent: 130, stagger: 0.03, ease: "power3.out", duration: 0.5 }, 0.25)
-        .from(".cine-billing", { opacity: 0, y: 14, duration: 0.3 }, 0.45)
-        .from(".cine-role, .cine-btn, .cine-tags", { opacity: 0, y: 20, stagger: 0.08, duration: 0.35 }, 0.6);
+    // ---- reel rail progress bar ----
+    const rail=$("#reelRail"), prog=$("#reelProgress");
+    if(rail&&prog){
+      const upd=()=>{ const max=rail.scrollWidth-rail.clientWidth; const p=max>0?rail.scrollLeft/max:0; prog.style.width=(p*100)+"%"; };
+      rail.addEventListener("scroll",upd,{passive:true}); upd();
+    }
+
+    // ---- Tangles pinned scene ----
+    const cineChars = $$(".cine-title [data-split] .ch");
+    gsap.matchMedia().add("(min-width: 760px)", ()=>{
+      const tl=gsap.timeline({ scrollTrigger:{ trigger:".cine-stage", start:"top top", end:"+=130%", pin:true, scrub:0.8, anticipatePin:1 } });
+      tl.to(".bar-top",{ height:"7%", ease:"power2.inOut", duration:1 },0)
+        .to(".bar-bot",{ height:"7%", ease:"power2.inOut", duration:1 },0)
+        .from(".cine-portrait",{ xPercent:-14, opacity:0, ease:"power2.out", duration:0.7 },0.15)
+        .to(".cine-img",{ filter:"grayscale(0) contrast(1.05)", scale:1.03, ease:"none", duration:0.7 },0.5)
+        .from(cineChars,{ yPercent:130, stagger:0.03, ease:"power3.out", duration:0.5 },0.25)
+        .from(".cine-billing",{ opacity:0, y:14, duration:0.3 },0.45)
+        .from(".cine-role, .cine-btn, .cine-tags",{ opacity:0, y:20, stagger:0.08, duration:0.35 },0.6);
     });
-    gsap.matchMedia().add("(max-width: 759px)", () => {
-      gsap.set([".bar-top", ".bar-bot"], { height: "5%" });
-      gsap.from(".cine-portrait", { opacity: 0, y: 36, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: ".cine-stage", start: "top 72%" } });
-      gsap.to(".cine-img", { filter: "grayscale(0) contrast(1.05)", scrollTrigger: { trigger: ".cine-stage", start: "top 58%" } });
-      gsap.from(cineTitle, { yPercent: 130, stagger: 0.025, duration: 0.6, ease: "power3.out", scrollTrigger: { trigger: ".cine-title", start: "top 82%" } });
+    gsap.matchMedia().add("(max-width: 759px)", ()=>{
+      gsap.set([".bar-top",".bar-bot"],{ height:"5%" });
+      gsap.from(".cine-portrait",{ opacity:0, y:36, duration:0.9, ease:"power3.out", scrollTrigger:{ trigger:".cine-stage", start:"top 72%" } });
+      gsap.to(".cine-img",{ filter:"grayscale(0) contrast(1.05)", scrollTrigger:{ trigger:".cine-stage", start:"top 58%" } });
+      gsap.to(cineChars,{ yPercent:0, stagger:0.025, duration:0.6, ease:"power3.out", scrollTrigger:{ trigger:".cine-title", start:"top 82%" } });
     });
 
     // ---- desktop reel drift ----
-    gsap.matchMedia().add("(min-width: 900px)", () => {
-      $$(".reel-rail .reel-card").forEach((cell, i) => {
-        const drift = i % 2 ? -34 : 0;
-        if (!drift) return;
-        gsap.to(cell, { y: drift, ease: "none", scrollTrigger: { trigger: ".reel-rail", start: "top bottom", end: "bottom top", scrub: 1.2 } });
+    gsap.matchMedia().add("(min-width: 900px)", ()=>{
+      $$(".reel-rail .reel-card").forEach((cell,i)=>{
+        const drift=i%2?-30:0; if(!drift) return;
+        gsap.to(cell,{ y:drift, ease:"none", scrollTrigger:{ trigger:".reel-rail", start:"top bottom", end:"bottom top", scrub:1.2 } });
       });
     });
 
-    // ---- cursor + magnetic (desktop, fine pointer) ----
-    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-      const cur = $(".cursor");
-      if (cur) {
-        const cx = gsap.quickTo(cur, "x", { duration: 0.35, ease: "power3" });
-        const cy = gsap.quickTo(cur, "y", { duration: 0.35, ease: "power3" });
-        addEventListener("mousemove", e => { cur.style.opacity = 1; cx(e.clientX); cy(e.clientY); });
-        $$(".reel-card").forEach(r => {
-          r.addEventListener("mouseenter", () => { cur.style.width = "70px"; cur.style.height = "70px"; cur.style.background = "var(--accent)"; const s = cur.querySelector("span"); if (s) s.style.opacity = 1; });
-          r.addEventListener("mouseleave", () => { cur.style.width = "38px"; cur.style.height = "38px"; cur.style.background = "transparent"; const s = cur.querySelector("span"); if (s) s.style.opacity = 0; });
+    // ---- custom cursor + magnetic (fine pointer only) ----
+    if(matchMedia("(hover: hover) and (pointer: fine)").matches){
+      const dot=$(".cursor-dot"), ring=$(".cursor-ring");
+      if(dot&&ring){
+        const dx=gsap.quickTo(dot,"x",{duration:0.12,ease:"power3"});
+        const dy=gsap.quickTo(dot,"y",{duration:0.12,ease:"power3"});
+        const rx=gsap.quickTo(ring,"x",{duration:0.35,ease:"power3"});
+        const ry=gsap.quickTo(ring,"y",{duration:0.35,ease:"power3"});
+        addEventListener("mousemove",e=>{ dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY); });
+        $$("a, button").forEach(el=>{
+          el.addEventListener("mouseenter",()=>{ ring.style.width="60px"; ring.style.height="60px"; ring.style.background="rgba(240,163,47,.18)"; });
+          el.addEventListener("mouseleave",()=>{ ring.style.width="38px"; ring.style.height="38px"; ring.style.background="transparent"; });
         });
-        $$("a").forEach(a => {
-          a.addEventListener("mouseenter", () => { if (cur.style.background.includes("transparent") || !cur.style.background) cur.style.background = "rgba(240,163,47,.18)"; cur.style.width = "54px"; cur.style.height = "54px"; });
-          a.addEventListener("mouseleave", () => { cur.style.background = "transparent"; cur.style.width = "38px"; cur.style.height = "38px"; });
+        $$(".reel-card").forEach(el=>{
+          el.addEventListener("mouseenter",()=>{ ring.style.width="74px"; ring.style.height="74px"; ring.style.background="var(--marigold)"; const s=ring.querySelector(".cur-label"); if(s) s.style.opacity=1; });
+          el.addEventListener("mouseleave",()=>{ ring.style.width="38px"; ring.style.height="38px"; ring.style.background="transparent"; const s=ring.querySelector(".cur-label"); if(s) s.style.opacity=0; });
         });
       }
-      $$(".magnet").forEach(m => {
-        const mx = gsap.quickTo(m, "x", { duration: 0.4, ease: "power3" });
-        const my = gsap.quickTo(m, "y", { duration: 0.4, ease: "power3" });
-        m.addEventListener("mousemove", e => { const b = m.getBoundingClientRect(); mx((e.clientX - b.left - b.width / 2) * 0.3); my((e.clientY - b.top - b.height / 2) * 0.3); });
-        m.addEventListener("mouseleave", () => { mx(0); my(0); });
+      // magnetic buttons
+      $$("[data-magnet], .btn, .btn-solid").forEach(m=>{
+        const mx=gsap.quickTo(m,"x",{duration:0.4,ease:"power3"});
+        const my=gsap.quickTo(m,"y",{duration:0.4,ease:"power3"});
+        m.addEventListener("mousemove",e=>{ const b=m.getBoundingClientRect(); mx((e.clientX-b.left-b.width/2)*0.3); my((e.clientY-b.top-b.height/2)*0.3); });
+        m.addEventListener("mouseleave",()=>{ mx(0); my(0); });
       });
     }
 
-    // ---- refresh on resize (debounced) ----
-    let rt;
-    addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => ST.refresh(), 200); }, { passive: true });
+    // ---- refresh on resize ----
+    let rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(()=>ST.refresh(),200); },{passive:true});
   }
 })();
 </script>
