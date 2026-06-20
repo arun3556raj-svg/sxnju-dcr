@@ -7,21 +7,14 @@
    ============================================================ */
 
 /**
- * Silent MP3 placeholder (base64-encoded).
- * Replace individual sound URLs with real .mp3 files when ready.
+ * Actual temporary sound URLs (Google Actions free sound library).
  */
-const SILENT_MP3 =
-  'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA' +
-  '//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7' +
-  'u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7////////////////////////////' +
-  '//////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAA' +
-  'AAABhvwN6OIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
-  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
-  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UGQAD/AAADSAAAAAIAAANIAAAAQAAAaQAAAAgAAA0gAAABAAAAAAAA' +
-  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
-  'AAAAAAAAAAAAAAAAAAAAAAAAAA//tQZAAP8AAAaQAAAAgAAA0gAAABAAAANIAAAAQAAAaQAAAAgAAAAAAAA' +
-  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
-  'AAAAAAAAAAAAAAAAAAAAAAA';
+const SOUND_URLS = {
+  projector: 'https://actions.google.com/sounds/v1/foley/film_projector.ogg',
+  tick: 'https://actions.google.com/sounds/v1/ui/button_click.ogg',
+  thud: 'https://actions.google.com/sounds/v1/foley/wood_thud.ogg',
+  slate: 'https://actions.google.com/sounds/v1/foley/clapperboard.ogg'
+};
 
 /* ────────────────────────────────────────────────────────────
    SoundManager Class
@@ -38,33 +31,34 @@ class SoundManager {
      Call once on DOMContentLoaded.
      ---------------------------------------------------------- */
   static init() {
-    // TODO: Replace SILENT_MP3 with a real film-projector hum loop (≈0.5 s)
-    //       e.g. src: ['/audio/projector-hum.mp3']
+    if (!window.Howl) {
+      console.warn('Howler.js not loaded.');
+      return;
+    }
+
+    // 1. Page load hum
     SoundManager.sounds.projector = new Howl({
-      src: [SILENT_MP3],
-      volume: 0.2,
-      loop: false,
-    });
-
-    // TODO: Replace SILENT_MP3 with a soft tactile click / tick (≈0.15 s)
-    //       e.g. src: ['/audio/tick.mp3']
-    SoundManager.sounds.tick = new Howl({
-      src: [SILENT_MP3],
-      volume: 0.25,
-    });
-
-    // TODO: Replace SILENT_MP3 with a subtle bass hit / thud (≈0.3 s)
-    //       e.g. src: ['/audio/thud.mp3']
-    SoundManager.sounds.thud = new Howl({
-      src: [SILENT_MP3],
+      src: [SOUND_URLS.projector],
       volume: 0.15,
+      loop: false
     });
 
-    // TODO: Replace SILENT_MP3 with a film-slate clap variant (≈0.25 s)
-    //       e.g. src: ['/audio/slate-clap.mp3']
+    // 2. Section enter tick
+    SoundManager.sounds.tick = new Howl({
+      src: [SOUND_URLS.tick],
+      volume: 0.2
+    });
+
+    // 3. CTA hover thud
+    SoundManager.sounds.thud = new Howl({
+      src: [SOUND_URLS.thud],
+      volume: 0.25
+    });
+
+    // 4. Slate alternative hover
     SoundManager.sounds.slate = new Howl({
-      src: [SILENT_MP3],
-      volume: 0.3,
+      src: [SOUND_URLS.slate],
+      volume: 0.2
     });
 
     console.log('[SoundManager] Initialised with placeholder audio.');

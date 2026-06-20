@@ -365,16 +365,30 @@
       });
     }
 
-    /* ─── 13. Reel Rail Progress Bar ──────────────────────── */
+    /* ─── 13. Reel Rail GSAP Horizontal Pin ──────────────────────── */
     const reelRail = $('#reelRail');
     const reelProgress = $('#reelProgress');
+    const workSection = $('#work');
 
-    if (reelRail && reelProgress) {
-      reelRail.addEventListener('scroll', () => {
-        const max = reelRail.scrollWidth - reelRail.clientWidth;
-        const pct = max > 0 ? (reelRail.scrollLeft / max) * 100 : 0;
-        reelProgress.style.width = pct + '%';
-      }, { passive: true });
+    if (reelRail && workSection && !reduced) {
+      // Calculate how far to move the rail horizontally
+      let getScrollAmount = () => reelRail.scrollWidth - window.innerWidth + 80;
+      
+      gsap.to(reelRail, {
+        x: () => -getScrollAmount(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: workSection,
+          start: 'top 10%',
+          end: () => `+=${getScrollAmount()}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          onUpdate: self => {
+            if (reelProgress) reelProgress.style.width = (self.progress * 100) + '%';
+          }
+        }
+      });
     }
 
     /* ─── 14. Tangles / Pinned Cine-Stage ─────────────────── */
@@ -621,6 +635,26 @@
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+
+    /* ─── 19. Reel Video Hovers ───────────────────────────── */
+    $$('.reel-card').forEach(card => {
+      const vid = card.querySelector('.reel-vid');
+      if (!vid) return;
+
+      card.addEventListener('mouseenter', () => {
+        vid.play().catch(() => {}); // ignore autoplay restrictions
+        if (window.SoundManager && !SoundManager.muted) {
+          gsap.to(vid, { volume: 0.4, duration: 1 });
+          vid.muted = false;
+        }
+      });
+
+      card.addEventListener('mouseleave', () => {
+        vid.pause();
+        vid.currentTime = 0;
+        vid.muted = true;
+      });
     });
 
   } // end init()
